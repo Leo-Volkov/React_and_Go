@@ -1,25 +1,68 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useRef, useMemo, useEffect } from 'react'
+import axios from 'axios'
+// import Counter from './components/Counter';
+// import ClassCount from './components/ClassCount';
+import MyBatton from './components/UI/batton/MyButton'
+import Postlist from './components/Postlist'
+import PostForm from './components/PostForm'
+import PostFilter from './components/PostFilter'
+import MyModal from './components/UI/MyModal/MyModal'
+import Loading from './components/UI/Loading/Loading'
+import { usePosts } from './hooks/usePosts'
+import PostService from './API/PostService'
+
+import './style/App.css'
 
 function App() {
+  const [posts, setPosts] = useState([])
+
+  const [filter, setFilter] = useState({ sort: '', query: '' })
+  const [madel, setMadel] = useState(false)
+
+  const [isPostsLoading, setIsPostsLoading] = useState(false)
+
+  const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  async function fetchPosts() {
+    setIsPostsLoading(true)
+    setTimeout( async () => {
+      setPosts(await PostService.getAll())
+      setIsPostsLoading(false)  
+    }, 3000)
+    
+  }
+
+  function createPost(newPost) {
+    setPosts([...posts, newPost])
+    setMadel(false)
+  }
+
+  // Получаем post из дочернего компонента
+  const removePost = (post) => {
+    setPosts(posts.filter((p) => p.id !== post.id))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <MyBatton style={{ marginTop: 10 }} onClick={() => setMadel(true)}>
+        Создать пост
+      </MyBatton>
+      <MyModal visible={madel} setVisible={setMadel}>
+        <PostForm create={createPost} />
+      </MyModal>
+      <hr style={{ margin: '15px 0', width: '630px' }} />
+      <PostFilter filter={filter} setFilter={setFilter} />
+      {isPostsLoading 
+        ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
+            <Loading />
+          </div>
+        : <Postlist remove={removePost} posts={sortedAndSearchedPosts} title="Список постов 1" />}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
