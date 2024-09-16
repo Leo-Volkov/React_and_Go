@@ -18,23 +18,16 @@ function App() {
 
   const [filter, setFilter] = useState({ sort: '', query: '' })
   const [madel, setMadel] = useState(false)
-
-  const [isPostsLoading, setIsPostsLoading] = useState(false)
-
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
 
-  useEffect(() => {
-    fetchPosts()
-  }, [])
+  const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
+    const response = await PostService.getAll()
+    setPosts(response.data)
+  })
 
-  async function fetchPosts() {
-    setIsPostsLoading(true)
-    setTimeout( async () => {
-      setPosts(await PostService.getAll())
-      setIsPostsLoading(false)  
-    }, 3000)
-    
-  }
+  useEffect(() => {
+    fetchPost()
+  }, [])
 
   function createPost(newPost) {
     setPosts([...posts, newPost])
