@@ -9,6 +9,7 @@ import PostFilter from './components/PostFilter'
 import MyModal from './components/UI/MyModal/MyModal'
 import Loading from './components/UI/Loading/Loading'
 import { usePosts } from './hooks/usePosts'
+import { useFetching } from './hooks/useFetching'
 import PostService from './API/PostService'
 
 import './style/App.css'
@@ -22,7 +23,7 @@ function App() {
 
   const [fetchPost, isPostsLoading, postError] = useFetching(async () => {
     const response = await PostService.getAll()
-    setPosts(response.data)
+    setPosts(response)
   })
 
   useEffect(() => {
