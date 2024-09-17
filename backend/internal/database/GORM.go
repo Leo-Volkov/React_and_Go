@@ -13,22 +13,19 @@ import (
 
 var DB *gorm.DB
 
-func init() {
+func InitBD() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error load .env file")
 	}
-}
-
-func InitBD() {
 	dns := os.Getenv("DNS")
+
 	var err error
-	DB, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
-	if err != nil {
+	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{}); if err != nil {
 		log.Fatal("Failed to connect to the database:", err)
 	}
-
-	log.Println("Database connection established successfully")
+	DB = db
 	
+	log.Println("Database connection established successfully")
 	// Проверка активного соединения
 	if err := checkConnection(); err != nil {
 			log.Fatal("Database connection check failed:", err)

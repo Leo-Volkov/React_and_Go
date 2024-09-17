@@ -12,6 +12,6 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/post/get", api.GetPosts)
-
+	r.GET("/post/delete", api.DeletePosts)
 	r.Run(":8080")
 }
