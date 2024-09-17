@@ -1,7 +1,7 @@
 package models
 
-type Model struct {
-	Id    uint 	`gorm:"primaryKey"`
-	Title string
-	Bode  string
+type Post struct {
+    ID    uint   `gorm:"primaryKey" json:"id"`
+    Title string
+    Body  string 
 }
